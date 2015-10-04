@@ -1,13 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 # Pick the frameworks you want:
-require "active_model/railtie"
-require "active_job/railtie"
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "action_view/railtie"
-require "sprockets/railtie"
+require "rails/all"
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
@@ -16,6 +10,21 @@ Bundler.require(*Rails.groups)
 
 module BeyonicProject
   class Application < Rails::Application
+
+    config.generators do |config|
+      config.helper false
+      config.assets false
+      # config.test_framework :rspec,
+      #   fixtures: true,
+      #   view_specs: false,
+      #   helper_specs: false,
+      #   routing_specs: false,
+      #   controller_specs: false,
+      #   request_specs: false
+      config.fixture_replacement :factory_girl, dir: "spec/factories"
+    end
+
+    config.time_zone = 'Nairobi'
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
