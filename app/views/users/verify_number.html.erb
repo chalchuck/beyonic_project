@@ -1,0 +1,35 @@
+		
+		<div class="mfs-authform">
+	<div class="panel panel-default">
+
+	<div class="panel-body">
+	
+
+			<h3>Check your phone.</h3><hr>
+
+			<p>We’ve texted a code to <%= %{#{current_user.mobile_number}}%>. Once you receive the code, enter it below to confirm your phone number.</p>
+			<hr>
+
+			<div class="panel-body">
+				<%= simple_form_for current_user, url: [:verify_mobile_number, current_user], method: "PUT" do |f| %>
+						
+					<table class="mfs-table">
+						<tr>
+							<td width="23%">Verification code</td>
+							<td><%= f.input :verification_code, label: false %></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><%= f.submit "Activate Phone", class: "button pull-right" %></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><%#= link_to "Request a new verification code", [:generate_new_token, current_user] %></td>
+						</tr>
+					</table>
+				<% end %>
+				</div>
+			</div>
+		</div>
+	
+	</div>

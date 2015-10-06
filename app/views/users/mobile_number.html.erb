@@ -1,0 +1,32 @@
+
+<div class="mfs-authform">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h3>Add your phone number.</h3><hr>
+
+			Enter your phone number in the box below. We’ll send you a text message with a confirmation code.
+			Text message fees may apply.
+
+			<hr>
+
+			<div class="panel-body">
+				<%= simple_form_for current_user, url: [:mobile_number, current_user], method: "PUT" do |f| %>
+						
+					<table class="mfs-table">
+						<tr>
+							<td>Phone number</td>
+							<td>
+								<%= f.input :mobile_number, label: false, class: 'form-control' %>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<%= f.submit "Add mobile number", class: "col-md-4 pull-right button" %>
+							</td>
+						</tr>
+					</table>
+				<% end %>
+			</div>			
+	</div>
+</div>
+</div>

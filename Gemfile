@@ -18,6 +18,7 @@ gem 'simple_form'
 gem 'will_paginate'
 gem 'devise'
 gem 'figaro', '~>1.0'
+gem 'africas_talking', github: "chalchuck/africas-talking"
 
 
 group :development, :test do
@@ -34,5 +35,7 @@ group :development, :test do
   gem 'shoulda'
   gem 'shoulda-matchers'
   gem 'rspec-rails'
+  gem 'better_errors'
+  gem 'capistrano-rails', '~> 1.1.0'
 end
 

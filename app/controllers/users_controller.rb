@@ -1,9 +1,11 @@
 class UsersController < BaseController
+	skip_before_action :check_mobile_number, only: [:verify_number, :verify_mobile_number]
+  skip_before_action :ensure_twoway_authenticate, only: [:authenticate_twoway]
 	before_action :locate_user, only: [:show, :update, :notifications]
 
 	def index
     @users = User.all
-    respond_with(@users)
+    # respond_with(@users)
   end
 
   def show
@@ -20,45 +22,46 @@ class UsersController < BaseController
     respond_with(@user)
   end
 
-	def add
-	end
+  def verify_number
+    @title = "Hi #{current_user}, Confirm your Mobile Number."
+    current_user.mobile_verification_code = ""
+  end
 
-	def add_mobile_number
-		if current_user.update(mobile_number_params)
-			MobileNumberService.new(current_user).send_verification_token
-			redirect_to [:verify_number, current_user], notice: I18n.t('mobile_verification_code_sent')
-		else
-			redirect_to :back, alert: "Mobile verification code can not be sent"
-		end
-	end
+  def verification_code
+    MobileNumberService.new(nil, current_user).generate_mobile_code
+    redirect_to request.referrer, notice: t('verification_code.regenerate')
+  end
+
+  def authenticate_twoway
+    if request.method == "GET"
+      
+    elsif request.method == "POST"
+      return (redirect_to :back, alert: "The code can not be blank") if params[:user][:twoway_code].blank?
+      response = TwoWayAuthenticate.new(current_user).authenticate(params[:user][:twoway_code])
+      # binding.pry
+      return (redirect_to :back, alert: "Sorry the code you gave is incorrect!") unless response
+      redirect_to root_url, notice: "You have successfully logged in!"
+    end
+  end
 
 	def generate_new_token
 		MobileNumberService.new(current_user).send_verification_token
 		redirect_to request.referrer, notice: "A new verification code has been sent to your phone"
 	end
 
-	def cancel_verification
-		MobileNumberService.new(current_user).cancel_verification
-		redirect_to [:mobile_number, current_user], notice: "Phone activation canceled"
-	end
-
-	def change
-		if current_user.update(mobile_number_params)
-			generate_and_send_verification_token
-			redirect_to [:verify_number, current_user], notice: I18n.t('mobile_verification_code_sent')
-		else
-			render 'new', notice: t('add_new_mobile_number')
-		end
-	end
-
 	def verify_number
 	end
 
 	def verify_mobile_number
-		return redirect_to request.referrer, notice: t('blank_verification_code') if params[:user][:verification_code].blank?
-		response = MobileNumberService.new(current_user).verify_number(params[:user][:verification_code])
-		return redirect_to request.referrer, notice: "#{response}" unless response.eql?(true)
-		redirect_to [:account, current_user], notice: t('correct_verification_code')
+		if request.method == "GET"
+			current_user.mobile_verification_code = ""
+		elsif request.method == "POST"
+			return redirect_to request.referrer, notice: t('blank_verification_code') if params[:user][:verification_code].blank?
+			response = MobileNumberService.new(current_user).verify_number(params[:user][:verification_code])
+			return redirect_to request.referrer, notice: "#{response}" unless response.eql?(true)
+			redirect_to root_url, notice: t('correct_verification_code')	
+		end
+		
 	end
 
 

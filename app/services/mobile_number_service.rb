@@ -41,14 +41,15 @@ class MobileNumberService
 		verify_code = verification_token
 		user.update(mobile_verification_code: verify_code)
 		message = %{Hello #{user.try(:name)}, Your mobile number verification code is, #{verify_code}}
-		AfricasTalking::Message.new(ENV.fetch('username'), ENV.fetch('pass')).deliver(recipient: user.try(:mobile_number), message: message)
+		p message
+		# AfricasTalking::Message.new(ENV.fetch('username'), ENV.fetch('pass')).deliver(recipient: user.try(:mobile_number), message: message)
 	end
 
 	def verification_token		
 		loop do
 			range = (0..9).to_a
 			token = (0..5).map {|opt| rand(range.length)}.join
-			break token unless user.where('lower(mobile_verification_code) = :qs', qs: token.downcase).present?
+			break token unless User.where('lower(mobile_verification_code) = :qs', qs: token.downcase).present?
 		end		
 	end
 

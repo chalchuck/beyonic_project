@@ -1,0 +1,23 @@
+<div class="authform">
+			
+	<%= simple_form_for current_user, url: [:authenticate_twoway, current_user], method: "PUT" do |f| %>
+
+		<h3>Two way autentication code</h3><hr>
+
+		<p>Enter the code we have sent to your phone number to authenticate.</p>
+		<br>
+		<br>
+			
+		<table class="mfs-table">
+			<tr>
+				<td width="23%">Verification Code</td>
+				<td><%= f.input :twoway_code, label: false %></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><%= f.submit "Authenticate", class: "button pull-right" %></td>
+			</tr>
+		</table>
+	<% end %>
+	
+	</div>

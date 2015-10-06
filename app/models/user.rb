@@ -44,7 +44,7 @@
 
 class User < ActiveRecord::Base
 
-	attr_accessor :full_name, :login
+	attr_accessor :full_name, :login, :verification_code, :twoway_code
 
   devise :database_authenticatable, :registerable, :confirmable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
   										 format: {with: /\A[A-Z0-9_]*\z/i, message: "Your username should have only letters and numbers"}
   
   ##########CALLBACKS####################################################################
-  
+  after_create :generate_mobile_verification_code
 
   def to_s
     try(:name) or try(:email)
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
   end
 
   def mobile_number=(unformated_number)
-  	MobileNumberService.new(self, unformated_number).
+  	self[:mobile_number] = MobileNumberService.new(self).prepend_prefix(unformated_number)
   end
 
   def full_name
@@ -80,10 +80,37 @@ class User < ActiveRecord::Base
   end
   alias_method :name, :full_name
 
+
+  def verified?
+    mobile_number.present? and mobile_verification_code.blank? and verified_at.present?
+  end
+
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
+    
     return where(conditions).first unless (login = conditions.delete(:login))
-    where(conditions).where(["lower(username) = :opt OR lower(email) = :opt", {opt: login.downcase}]).first
+    where(conditions).where(["lower(username) = :opt OR lower(email) = :opt", {opt: login.downcase}]).first    
+  end
+
+  # def self.find_for_database_authentication(warden_conditions)
+  #   conditions = warden_conditions.dup
+  #   if login = conditions.delete(:login)
+  #     result = where(conditions).where(["lower(username) = :opt OR lower(email) = :opt", {opt: query.downcase}]).first
+  #     if result.present?
+  #       TwoWayAuthenticate.new(self).send_twowaycode
+  #       result
+  #     else
+  #       result
+  #     end
+  #   else
+  #     where(conditions).first
+  #   end
+  # end
+
+  def generate_mobile_verification_code
+    if mobile_verification_code.blank?
+      self[:mobile_verification_code] = MobileNumberService.new(self).send_mobile_verification_code
+    end
   end
 
 end
