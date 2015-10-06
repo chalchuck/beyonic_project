@@ -17,7 +17,7 @@ class BaseController < ApplicationController
 
 	def check_mobile_number
 		if !current_user.verified?
-			redirect_to [:verify_number, current_user], notice: "wre;lghiodsjfg;lkj ljnjk"
+			redirect_to [:verify_number, current_user], notice: "Verify your mobile number"
 		end
 	end
 

@@ -1,6 +1,6 @@
 class UsersController < BaseController
-	skip_before_action :check_mobile_number, only: [:verify_number, :verify_mobile_number]
-  skip_before_action :ensure_twoway_authenticate, only: [:authenticate_twoway]
+	skip_before_action :check_mobile_number, only: [:verify_number, :verify_mobile_number, :generate_new_token]
+  skip_before_action :ensure_twoway_authenticate, only: [:authenticate_twoway, :verify_number, :verify_mobile_number, :generate_new_token]
 	before_action :locate_user, only: [:show, :update, :notifications]
 
 	def index
@@ -27,25 +27,19 @@ class UsersController < BaseController
     current_user.mobile_verification_code = ""
   end
 
-  def verification_code
-    MobileNumberService.new(nil, current_user).generate_mobile_code
-    redirect_to request.referrer, notice: t('verification_code.regenerate')
-  end
-
   def authenticate_twoway
     if request.method == "GET"
       
     elsif request.method == "POST"
       return (redirect_to :back, alert: "The code can not be blank") if params[:user][:twoway_code].blank?
       response = TwoWayAuthenticate.new(current_user).authenticate(params[:user][:twoway_code])
-      # binding.pry
       return (redirect_to :back, alert: "Sorry the code you gave is incorrect!") unless response
       redirect_to root_url, notice: "You have successfully logged in!"
     end
   end
 
 	def generate_new_token
-		MobileNumberService.new(current_user).send_verification_token
+		MobileNumberService.new(current_user).send_mobile_verification_code
 		redirect_to request.referrer, notice: "A new verification code has been sent to your phone"
 	end
 
@@ -61,9 +55,7 @@ class UsersController < BaseController
 			return redirect_to request.referrer, notice: "#{response}" unless response.eql?(true)
 			redirect_to root_url, notice: t('correct_verification_code')	
 		end
-		
 	end
-
 
 private
 

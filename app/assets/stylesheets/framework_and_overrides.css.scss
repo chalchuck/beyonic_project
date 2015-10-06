@@ -84,7 +84,7 @@ section {
   @extend .alert;
   @extend .alert-danger;
   margin: 0 auto;
-  width: 50%;
+  width: 60%;
   // text-align: center;
   margin-top: 10px;
 }
@@ -98,7 +98,7 @@ section {
 
 .alert-danger, #error_explanation:not(:empty) {;
   margin: 0 auto;
-  width: 50%;
+  width: 60%;
   // text-align: center;
 }
 
@@ -108,7 +108,7 @@ section {
 
 .alert-success {
   margin: 0 auto;
-  width: 50%;
+  width: 60%;
   margin-top: 10px;
   // text-align: center;
 }

@@ -22,6 +22,9 @@ Rails.application.routes.draw do
       get :verify_number
       put :verify_mobile_number
 
+      get :generate_new_token
+      put :generate_new_token
+
     end
   end
 end

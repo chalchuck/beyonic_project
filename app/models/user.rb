@@ -54,10 +54,14 @@ class User < ActiveRecord::Base
   validates :first_name, presence: true, length: {in: 1..55}
   validates :last_name, presence: true, length: {in: 1..55}
   validates :password, confirmation: false
-  validates :mobile_number, length: {in: 10..14}, allow_blank: true
-  validates :username, length: {in: 3..20},
-  										 allow_blank: true,
-  										 format: {with: /\A[A-Z0-9_]*\z/i, message: "Your username should have only letters and numbers"}
+  validates :mobile_number, 
+            length: {in: 10..14},
+            presence: true, 
+            uniqueness: { message: "%{value} already in use"}
+  validates :username, 
+            length: {in: 3..20},
+  					allow_blank: true,
+  					format: {with: /\A[A-Z0-9_]*\z/i, message: "Your username should have only letters and numbers"}
   
   ##########CALLBACKS####################################################################
   after_create :generate_mobile_verification_code
