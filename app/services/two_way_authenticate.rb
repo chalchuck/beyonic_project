@@ -25,7 +25,7 @@ class TwoWayAuthenticate
 	def send_twowaycode
 		verify_code = twowaycode
 		resource.update(authentication_code: verify_code)
-		message = %{ Hi #{resource.try(:name)}, enter this code to login to your account}
+		message = %{ Hi #{resource.try(:name)}, enter this code #{verify_code} to login to your account}
 		AfricasTalking::Message.new(ENV['SMS_API_USERNAME'], ENV['SMS_API_KEY']).deliver(resource.try(:mobile_number), message)		
 	end
 
