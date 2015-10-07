@@ -15,7 +15,7 @@ gem 'bootstrap-sass'
 gem 'will_paginate-bootstrap'
 gem 'simple_form'
 gem 'will_paginate'
-gem 'devise'
+gem 'devise', '>= 3.5.2'
 gem 'figaro', '~>1.0'
 gem 'africas_talking', github: "chalchuck/africas-talking"
 gem 'rails_12factor'

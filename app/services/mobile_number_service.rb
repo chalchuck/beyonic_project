@@ -41,10 +41,7 @@ class MobileNumberService
 		verify_code = verification_token
 		user.update(mobile_verification_code: verify_code)
 		message = %{Hello #{user.try(:name)}, Your mobile number verification code is, #{verify_code}}
-		AfricasTalking::Message.new(ENV['SMS_API_KEY'], ENV['SMS_API_USERNAME']).deliver(user.try(:mobile_number), message)
-	
-
-
+		AfricasTalking::Message.new(ENV['SMS_API_USERNAME'], ENV['SMS_API_KEY']).deliver(user.try(:mobile_number), message)
 	end
 
 	def verification_token		
