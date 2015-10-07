@@ -11,8 +11,7 @@ class TwoWayAuthenticate
 	end
 
 	def correct_code?(code)
-		# resource.authentication_code.eql?(code)
-		User.where(authentication_code: code).present?
+		User.where("lower(authentication_code) = :str", str: code.downcase).present?
 	end
 
 	def twowaycode
@@ -25,7 +24,7 @@ class TwoWayAuthenticate
 	def send_twowaycode
 		verify_code = twowaycode
 		resource.update(authentication_code: verify_code)
-		message = %{ Hi #{resource.try(:name)}, enter this code #{verify_code} to login to your account}
+		message = %{ Hi #{resource.try(:name)}, enter this code: #{verify_code} to login to your account}
 		AfricasTalking::Message.new(ENV['SMS_API_USERNAME'], ENV['SMS_API_KEY']).deliver(resource.try(:mobile_number), message)		
 	end
 
